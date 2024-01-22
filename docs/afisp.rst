@@ -35,3 +35,9 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. autoclass:: WorstSubsetFinder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members:
