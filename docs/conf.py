@@ -10,7 +10,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(".."))
-autodoc_mock_imports = ["numpy", "sklearn", "tqdm", "interpret", "matplotlib", "statsmodels", "imodels"]
+autodoc_mock_imports = ["numpy", "sklearn", "tqdm", "interpret", "matplotlib", 
+                        "statsmodels", "imodels", "torch"]
 
 project = 'AFISP'
 copyright = '2024, Adarsh Subbaswamy'
