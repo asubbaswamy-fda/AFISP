@@ -10,6 +10,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(".."))
+autodoc_mock_imports = ["numpy"]
 
 project = 'AFISP'
 copyright = '2024, Adarsh Subbaswamy'
