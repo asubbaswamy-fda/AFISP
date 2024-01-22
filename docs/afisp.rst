@@ -7,7 +7,7 @@ Submodules
 afisp.stability\_analysis module
 --------------------------------
 
-.. autoclass:: afisp.stability_analysis
+.. automodule:: afisp.stability_analysis
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ afisp.stability\_analysis module
 afisp.subgroup\_phenotyping module
 ----------------------------------
 
-.. autoclass:: afisp.subgroup_phenotyping
+.. automodule:: afisp.subgroup_phenotyping
    :members:
    :undoc-members:
    :show-inheritance:
