@@ -1,0 +1,10 @@
+version: 0.0.1
+
+build:
+  os: Scientific Linux 7.4
+  tools:
+    python "3.10"
+
+
+sphinx:
+  configuration: docs/conf.py
