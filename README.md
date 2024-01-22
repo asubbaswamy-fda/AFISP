@@ -1,6 +1,6 @@
-# AFISP
+# AFISP: Software to identify patient characteristics and data acquisition parameters associated with high error rates in predictive AI/ML models
 
-This repository contains code for the submission of the manuscript titled "A Data-Driven Framework for Identifying Patient Subgroups on Which an AI/Machine Learning Model May Underperform". The manuscript describes an Algorithmic Framework for Identifying Subgroups with potential Performance disparities (AFISP), which allows users to probe a trained machine learning or AI model for subgroups on which it underperforms.
+This repository contains code for the Regulatory Science Tool titled AFISP. The tool allows users to probe a trained machine learning (ML) or AI model for subgroups on which it underperforms.
 
 
 # Installation
@@ -8,29 +8,26 @@ This repository contains code for the submission of the manuscript titled "A Dat
 The code uses the R and python programming languages. To install an environment with code-compatible versions of these languages, first run
 
 ```
-conda env create -f conda_environment.yml
+conda env create -f environment.yml
 ```
 
-To install the requisite python packages, then run
+Activate the new conda environment by running
 
 ```
-pip install -r pip_packages.txt
+conda activate afisp
 ```
 
-To install the requisite R packages, run
+Then, to install the requisite R packages, run
 
 ```
 Rscript install_R_packages.R
 ```
 
+The code can now be run when the 'afisp' conda environment is activated.
+
+
 # Repo Organization
 
-The /src directory contains the source code for the AFISP method.
+The /afisp directory contains the source code for the tool.
 
-The /slicefinder directory contains a slightly modified version of the SliceFinder source code (https://github.com/yeounoh/slicefinder). SliceFinder is an algorithmic, search-based subgroup discovery method that serves as a state-of-the-art baseline in the experiments.
-
-The /simulation directory contains code used to generate results on synthetic data for which ground truth problematic subgroups are known.
-
-The /aam_experiments directory contains code used to generate the results and figures in the main text of the manuscript for the illustration of AFISP on the AAM model, a hospital in-patient triage model.
-
-The /mimic_experiments directory contains code used to generate results and figures in the supplementary material of the manuscript to apply AFISP on the publicly available MIMIC dataset.
+A demo jupyter notebook showcasing the core functionality of the tool can be found in 'demo.ipynb'.
