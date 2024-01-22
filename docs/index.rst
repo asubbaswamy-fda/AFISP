@@ -10,7 +10,7 @@ Welcome to AFISP's documentation!
    :maxdepth: 2
    :caption: Contents:
    
-   modules
+   afisp
 
 
 Indices and tables

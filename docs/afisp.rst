@@ -1,5 +1,26 @@
-afisp package
+AFISP Package
 =============
+
+Module contents
+---------------
+
+.. automodule:: afisp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: WorstSubsetFinder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members:
+
+.. autoclass:: SubgroupPhenotyper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :special-members:
+
 
 Submodules
 ----------
@@ -27,17 +48,3 @@ afisp.utils module
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: afisp
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. autoclass:: WorstSubsetFinder
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :special-members:
