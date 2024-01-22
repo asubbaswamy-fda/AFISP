@@ -25,21 +25,21 @@ Module contents
 Submodules
 ----------
 
-afisp.stability\_analysis module
---------------------------------
+.. afisp.stability\_analysis module
+.. --------------------------------
 
-.. automodule:: afisp.stability_analysis
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. .. automodule:: afisp.stability_analysis
+..    :members:
+..    :undoc-members:
+..    :show-inheritance:
 
-afisp.subgroup\_phenotyping module
-----------------------------------
+.. afisp.subgroup\_phenotyping module
+.. ----------------------------------
 
-.. automodule:: afisp.subgroup_phenotyping
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. .. automodule:: afisp.subgroup_phenotyping
+..    :members:
+..    :undoc-members:
+..    :show-inheritance:
 
 afisp.utils module
 ------------------
