@@ -50,7 +50,7 @@ def entropy(y, y_pred):
 def brier(y, y_pred):
     """Samplewise brier score for probabilistic classification
 
-    param y: Array of true binary classification labels
+    :param y: Array of true binary classification labels
     :type y: Numpy array with values in {0, 1}
     :param y_pred: Array of probabilistic predictions (between 0 and 1)
     :type y_pred: Numpy array with values in (0, 1)
@@ -63,7 +63,7 @@ def brier(y, y_pred):
 def zero_one_loss(y, y_pred):
     """Samplewise Zero-One Loss for binary classification
     
-    param y: Array of true binary classification labels
+    :param y: Array of true binary classification labels
     :type y: Numpy array with values in {0, 1}
     :param y_pred: Array of binary classification predictions {0, 1}
     :type y_pred: Numpy array with values in {0, 1}
