@@ -133,12 +133,12 @@ def xent_surrogate(labels, logits):
 def torch_roc_auc_surrogate(y, y_pred, surrogate='xent'):
     """PyTorch computation of a surrogate samplewise AUROC loss.
 
-    param y: Array of true binary classification labels
+    :param y: Array of true binary classification labels
     :type y: Numpy array with values in {0, 1}
     :param y_pred: Array of probabilistic predictions (between 0 and 1)
     :type y_pred: Numpy array with values in (0, 1)
     :param surrogate: String specifying which surrogate loss function to use,
-        defaults to 'xent'. 'xent': Cross-entropy surrogate. 'hinge': Hinge
+        defaults to 'xent'. 'xent' Cross-entropy surrogate. 'hinge' Hinge
         loss surrogate.
     :return: Array of samplewise surrogate AUROC losses.
     """
