@@ -5,8 +5,5 @@ build:
   tools:
     python: "3.12"
 
-conda:
-  environment: environment.yml
-
 sphinx:
   configuration: docs/conf.py
