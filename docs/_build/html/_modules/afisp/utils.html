@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>afisp.utils &mdash; AFISP 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            AFISP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">AFISP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AFISP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">afisp.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for afisp.utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+        
+                
+<div class="viewcode-block" id="clip_predictions">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.clip_predictions">[docs]</a>
+<span class="k">def</span> <span class="nf">clip_predictions</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clip probability predictions to be in the (0, 1) open interval.</span>
+
+<span class="sd">    :param preds: Array of sample predictions</span>
+<span class="sd">    :type preds: (num samples,) np array</span>
+<span class="sd">    :param upper_bound: Upper bound of clipped predictions, defaults to 0.99</span>
+<span class="sd">    :type upper_bound: float</span>
+<span class="sd">    :param lower_bound: Lower bound of clipped predictions, defaults to 0.01</span>
+<span class="sd">    :type lower_bound: float</span>
+<span class="sd">    :return: Predictions clipped to be in [lower_bound, upper_bound] interval</span>
+<span class="sd">    :rtype: List[float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">upper_bound</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">lower_bound</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;upper_bound must be &lt; 1 and lower_bound must be &gt; 0&#39;</span><span class="p">)</span>
+    <span class="n">new_preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+    <span class="n">one_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">preds</span> <span class="o">&gt;</span> <span class="n">upper_bound</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">zero_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">preds</span> <span class="o">&lt;</span> <span class="n">lower_bound</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="n">new_preds</span><span class="p">[</span><span class="n">one_inds</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">,</span> <span class="n">one_inds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">new_preds</span><span class="p">[</span><span class="n">zero_inds</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">zero_inds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">new_preds</span></div>
+
+
+
+<span class="c1"># Sample wise loss functions</span>
+<div class="viewcode-block" id="cross_entropy">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.cross_entropy">[docs]</a>
+<span class="k">def</span> <span class="nf">cross_entropy</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">y_pred</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Samplewise cross entropy loss for probabilistic classification</span>
+<span class="sd">    </span>
+<span class="sd">    :param y: Array of true binary classification labels</span>
+<span class="sd">    :type y: Numpy array with values in {0, 1}</span>
+<span class="sd">    :param y_pred: Array of probabilistic predictions (between 0 and 1)</span>
+<span class="sd">    :type y_pred: Numpy array with values in (0, 1)</span>
+<span class="sd">    :return: Array of per-sample cross entropy losses</span>
+<span class="sd">    :rtype: Array[float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Note: problems if preds are in {0, 1}</span>
+    <span class="c1"># Clip predictions before using.</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">clip_predictions</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">y</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">y_pred</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="entropy">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.entropy">[docs]</a>
+<span class="k">def</span> <span class="nf">entropy</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="brier">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.brier">[docs]</a>
+<span class="k">def</span> <span class="nf">brier</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Samplewise brier score for probabilistic classification</span>
+
+<span class="sd">    param y: Array of true binary classification labels</span>
+<span class="sd">    :type y: Numpy array with values in {0, 1}</span>
+<span class="sd">    :param y_pred: Array of probabilistic predictions (between 0 and 1)</span>
+<span class="sd">    :type y_pred: Numpy array with values in (0, 1)</span>
+<span class="sd">    :return: Array of per-sample brier scores</span>
+<span class="sd">    :rtype: Array[float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="zero_one_loss">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.zero_one_loss">[docs]</a>
+<span class="k">def</span> <span class="nf">zero_one_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Samplewise Zero-One Loss for binary classification</span>
+<span class="sd">    </span>
+<span class="sd">    param y: Array of true binary classification labels</span>
+<span class="sd">    :type y: Numpy array with values in {0, 1}</span>
+<span class="sd">    :param y_pred: Array of binary classification predictions {0, 1}</span>
+<span class="sd">    :type y_pred: Numpy array with values in {0, 1}</span>
+<span class="sd">    :return: Array of per-sample zero-one losses</span>
+<span class="sd">    :rtype: Array[float]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">1.</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">!=</span> <span class="n">y_pred</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="mse">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.mse">[docs]</a>
+<span class="k">def</span> <span class="nf">mse</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Samplewise mean squared error for regression</span>
+
+<span class="sd">    :param y: Array of true regression labels</span>
+<span class="sd">    :param y_pred: Array of regressin predictions</span>
+<span class="sd">    :return: Array of samplewise mean squared errors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="logit">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.logit">[docs]</a>
+<span class="k">def</span> <span class="nf">logit</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="c1"># Map probabilities to the real line</span>
+    <span class="c1"># Note: requires p to be in (0, 1) exclusive</span>
+    <span class="n">clipped</span> <span class="o">=</span> <span class="n">clip_predictions</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">clipped</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">-</span><span class="n">clipped</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="hinge_surrogate">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.hinge_surrogate">[docs]</a>
+<span class="k">def</span> <span class="nf">hinge_surrogate</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">logits</span><span class="p">):</span>
+    <span class="n">positives_term</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">logits</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">negatives_term</span> <span class="o">=</span>  <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">labels</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">logits</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1"># for surrogate purposes, this should just be the positive term</span>
+    <span class="k">return</span> <span class="n">positives_term</span> <span class="o">+</span> <span class="n">negatives_term</span></div>
+
+
+<div class="viewcode-block" id="xent_surrogate">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.xent_surrogate">[docs]</a>
+<span class="k">def</span> <span class="nf">xent_surrogate</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">logits</span><span class="p">):</span>
+    <span class="n">softplus_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="o">-</span><span class="n">logits</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">logits</span><span class="p">)))</span>
+    
+    <span class="c1"># for surrogate purposes, this should just be the softplus term</span>
+    <span class="c1"># because labels are all 1</span>
+    
+    <span class="k">return</span> <span class="n">logits</span> <span class="o">-</span> <span class="n">labels</span> <span class="o">*</span> <span class="n">logits</span> <span class="o">+</span> <span class="n">softplus_term</span></div>
+
+
+
+<span class="c1"># def pfohl_torch_roc_auc_surrogate(y, y_pred, surrogate=&#39;xent&#39;):</span>
+    
+    
+<span class="c1">#     y_torch = torch.tensor(y)</span>
+<span class="c1">#     # pfohl used log softmax (so log probabilities</span>
+<span class="c1">#     logits_torch = torch.tensor(np.log(y_pred))</span>
+    
+<span class="c1">#     logits_difference_torch = logits_torch.unsqueeze(0) - logits_torch.unsqueeze(1)</span>
+<span class="c1">#     labels_difference_torch = y_torch.unsqueeze(0) - y_torch.unsqueeze(1)</span>
+    
+<span class="c1">#     # matrex which is 1 if label y_i != label y_j</span>
+<span class="c1">#     abs_label_difference = torch.abs(labels_difference_torch)</span>
+    
+<span class="c1">#     signed_logits_difference_torch = logits_difference_torch * labels_difference_torch</span>
+    
+<span class="c1">#     # TODO: make it &#39;DRY&#39;</span>
+<span class="c1">#     if surrogate == &#39;xent&#39;:</span>
+<span class="c1">#         loss = torch.log(torch.sigmoid(signed_logits_difference_torch))</span>
+<span class="c1">#         loss = (abs_label_difference * loss).mean(axis=0) * 0.5</span>
+<span class="c1">#     elif surrogate == &#39;hinge&#39;:</span>
+<span class="c1">#         loss = torch.maximum(torch.zeros(1), torch.ones(1) - signed_logits_difference_torch)</span>
+<span class="c1">#         loss = (abs_label_difference * loss).mean(axis=0) * 0.5</span>
+        
+<span class="c1">#     return np.array(loss.tolist())</span>
+    
+
+<div class="viewcode-block" id="torch_roc_auc_surrogate">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.torch_roc_auc_surrogate">[docs]</a>
+<span class="k">def</span> <span class="nf">torch_roc_auc_surrogate</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">surrogate</span><span class="o">=</span><span class="s1">&#39;xent&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;PyTorch computation of a surrogate samplewise AUROC loss.</span>
+
+<span class="sd">    param y: Array of true binary classification labels</span>
+<span class="sd">    :type y: Numpy array with values in {0, 1}</span>
+<span class="sd">    :param y_pred: Array of probabilistic predictions (between 0 and 1)</span>
+<span class="sd">    :type y_pred: Numpy array with values in (0, 1)</span>
+<span class="sd">    :param surrogate: String specifying which surrogate loss function to use,</span>
+<span class="sd">        defaults to &#39;xent&#39;. &#39;xent&#39;: Cross-entropy surrogate. &#39;hinge&#39;: Hinge</span>
+<span class="sd">        loss surrogate.</span>
+<span class="sd">    :return: Array of samplewise surrogate AUROC losses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">y_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">logits_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">logit</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+    
+    <span class="n">logits_difference_torch</span> <span class="o">=</span> <span class="n">logits_torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">logits_torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">labels_difference_torch</span> <span class="o">=</span> <span class="n">y_torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">y_torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># matrex which is 1 if label y_i != label y_j</span>
+    <span class="n">abs_label_difference</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">labels_difference_torch</span><span class="p">)</span>
+    
+    <span class="n">signed_logits_difference_torch</span> <span class="o">=</span> <span class="n">logits_difference_torch</span> <span class="o">*</span> <span class="n">labels_difference_torch</span>
+    
+    <span class="k">if</span> <span class="n">surrogate</span> <span class="o">==</span> <span class="s1">&#39;xent&#39;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">signed_logits_difference_torch</span><span class="p">))</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">abs_label_difference</span> <span class="o">*</span> <span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="k">elif</span> <span class="n">surrogate</span> <span class="o">==</span> <span class="s1">&#39;hinge&#39;</span><span class="p">:</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">signed_logits_difference_torch</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">abs_label_difference</span> <span class="o">*</span> <span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+        
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span></div>
+
+    
+
+
+<div class="viewcode-block" id="roc_auc_surrogate">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.roc_auc_surrogate">[docs]</a>
+<span class="k">def</span> <span class="nf">roc_auc_surrogate</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">surrogate</span><span class="o">=</span><span class="s1">&#39;xent&#39;</span><span class="p">):</span>
+    
+    <span class="n">pos_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">neg_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pos_mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">neg_mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Examples are either all positive or all negative&quot;</span><span class="p">)</span>
+                           
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">logit</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span>
+        
+    
+    <span class="n">logits_difference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">labels_difference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># if there were weights</span>
+    <span class="c1"># weights_product = np.expand_dims(weights, 0) * np.expand_dims(weights, 1)</span>
+    
+    <span class="n">signed_logits_difference</span> <span class="o">=</span> <span class="n">labels_difference</span> <span class="o">*</span> <span class="n">logits_difference</span>
+    
+    <span class="c1"># compute surrogate loss</span>
+    <span class="k">if</span> <span class="n">surrogate</span> <span class="o">==</span> <span class="s1">&#39;hinge&#39;</span><span class="p">:</span>
+        <span class="n">surr_fn</span> <span class="o">=</span> <span class="n">hinge_surrogate</span>
+    <span class="k">elif</span> <span class="n">surrogate</span> <span class="o">==</span> <span class="s1">&#39;xent&#39;</span><span class="p">:</span>
+        <span class="n">surr_fn</span> <span class="o">=</span> <span class="n">xent_surrogate</span>
+    
+    <span class="n">surrogate_loss</span> <span class="o">=</span> <span class="n">surr_fn</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">signed_logits_difference</span><span class="p">),</span> <span class="n">signed_logits_difference</span><span class="p">)</span>
+    <span class="c1"># 0 out entries where labels were the same</span>
+    <span class="n">proxy_auc_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">labels_difference</span><span class="p">)</span> <span class="o">*</span> <span class="n">surrogate_loss</span>
+    <span class="c1"># np.mean(proxy_auc_loss, axis=0)</span>
+                             
+    
+    <span class="k">return</span> <span class="n">proxy_auc_loss</span></div>
+
+
+    
+    
+<div class="viewcode-block" id="bootstrap_ci">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.bootstrap_ci">[docs]</a>
+<span class="k">def</span> <span class="nf">bootstrap_ci</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">n_bootstrap</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">confidence</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">return_samples</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes non-parametric bootstrap confidence interval for model</span>
+<span class="sd">    performance.</span>
+
+<span class="sd">    :param y_true: True target labels</span>
+<span class="sd">    :param y_pred: Model predictions (be it regression predictions, probability</span>
+<span class="sd">        predictions, or classification predictions).</span>
+<span class="sd">    :param n_bootstrap: Number of bootstrap resamples to perform, defaults to</span>
+<span class="sd">        100.</span>
+<span class="sd">    :type n_bootstrap: int</span>
+<span class="sd">    :param confidence: The confidence level for the interval as a decimal,</span>
+<span class="sd">        defaults to 0.95</span>
+<span class="sd">    :type confidence: Float, between 0 and 1</span>
+<span class="sd">    :param loss: Loss function for computing average model performance. Should</span>
+<span class="sd">        have signature &#39;loss(y_true, y_pred)&#39;, defaults to </span>
+<span class="sd">        sklearn.metrics.roc_auc_score</span>
+<span class="sd">    :return: The mean performance, the lower interval, and the upper interval</span>
+<span class="sd">        from the bootstrap samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">upper_p</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">confidence</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">lower_p</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">((</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">confidence</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">aucs</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="nf">bootstrap_resample_inds</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_bootstrap</span><span class="p">):</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bootstrap_resample_inds</span><span class="p">())</span>
+        <span class="n">resample_true</span> <span class="o">=</span> <span class="n">y_true</span><span class="p">[</span><span class="n">inds</span><span class="p">]</span>
+        <span class="n">resample_pred</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[</span><span class="n">inds</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">loss</span><span class="o">==</span><span class="n">roc_auc_score</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">resample_true</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">resample_true</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">continue</span>
+        
+        <span class="n">aucs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="p">(</span><span class="n">resample_true</span><span class="p">,</span> <span class="n">resample_pred</span><span class="p">))</span>
+    
+    
+    <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">aucs</span><span class="p">,</span> <span class="p">[</span><span class="n">lower_p</span><span class="p">,</span> <span class="n">upper_p</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">return_samples</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">aucs</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">aucs</span><span class="p">),</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span></div>
+
+
+<div class="viewcode-block" id="cohens_d">
+<a class="viewcode-back" href="../../afisp.html#afisp.utils.cohens_d">[docs]</a>
+<span class="k">def</span> <span class="nf">cohens_d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">dof</span> <span class="o">=</span> <span class="n">nx</span> <span class="o">+</span> <span class="n">ny</span> <span class="o">-</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">nx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">ny</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">dof</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Adarsh Subbaswamy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>afisp package &mdash; AFISP 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="AFISP" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            AFISP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">AFISP</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">afisp package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-afisp.stability_analysis">afisp.stability_analysis module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.stability_analysis.WorstSubsetFinder"><code class="docutils literal notranslate"><span class="pre">WorstSubsetFinder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-afisp.subgroup_phenotyping">afisp.subgroup_phenotyping module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.subgroup_phenotyping.SubgroupPhenotyper"><code class="docutils literal notranslate"><span class="pre">SubgroupPhenotyper</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-afisp.utils">afisp.utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.bootstrap_ci"><code class="docutils literal notranslate"><span class="pre">bootstrap_ci()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.brier"><code class="docutils literal notranslate"><span class="pre">brier()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.clip_predictions"><code class="docutils literal notranslate"><span class="pre">clip_predictions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.cohens_d"><code class="docutils literal notranslate"><span class="pre">cohens_d()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.cross_entropy"><code class="docutils literal notranslate"><span class="pre">cross_entropy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.entropy"><code class="docutils literal notranslate"><span class="pre">entropy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.hinge_surrogate"><code class="docutils literal notranslate"><span class="pre">hinge_surrogate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.logit"><code class="docutils literal notranslate"><span class="pre">logit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.mse"><code class="docutils literal notranslate"><span class="pre">mse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.roc_auc_surrogate"><code class="docutils literal notranslate"><span class="pre">roc_auc_surrogate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.torch_roc_auc_surrogate"><code class="docutils literal notranslate"><span class="pre">torch_roc_auc_surrogate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.xent_surrogate"><code class="docutils literal notranslate"><span class="pre">xent_surrogate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#afisp.utils.zero_one_loss"><code class="docutils literal notranslate"><span class="pre">zero_one_loss()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-afisp">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AFISP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">AFISP</a></li>
+      <li class="breadcrumb-item active">afisp package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/afisp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="afisp-package">
+<h1>afisp package<a class="headerlink" href="#afisp-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-afisp.stability_analysis">
+<span id="afisp-stability-analysis-module"></span><h2>afisp.stability_analysis module<a class="headerlink" href="#module-afisp.stability_analysis" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">afisp.stability_analysis.</span></span><span class="sig-name descname"><span class="pre">WorstSubsetFinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subset_fractions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.1,</span> <span class="pre">0.15,</span> <span class="pre">0.2,</span> <span class="pre">0.4,</span> <span class="pre">0.6,</span> <span class="pre">0.8,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditional_loss_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>This is a class for performing a Stability Analysis of a trained machine
+learning (ML) model. Given a test dataset, a WorstSubsetFinder object 
+identifies a data subset of a particular sample size that produces the
+worst performance (i.e., a worst-case data subset of a given size). A worst
+case data subset corresponds to an adversarial covariate shift in the 
+distribution of user-specified features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subset_fractions</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – A list of subset fractions between 0 and 1. For 
+each subset fraction, the WorstSubsetFinder identifies the worst
+performing subset of approximately that subset fraction size (i.e., for
+a subset fraction f and a dataset of size N, the subset will be size
+approximately f*N, defaults to [0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 1.0].</p></li>
+<li><p><strong>conditional_loss_model</strong> – A supervised learning model with sklearn 
+interface for estimating the expected conditional loss of the ML model
+to be evaluated, defaults to None which will fit an 
+ExplainableBoostingRegressor.</p></li>
+<li><p><strong>cv</strong> (<em>int</em>) – Number of folds for cross validation to predict the loss for
+each data sample, defaults to 10.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – If True, then prints information during calls to self.fit,
+defaults to False.</p></li>
+<li><p><strong>eps</strong> (<em>float</em>) – Corresponds to the max amount of noise to add to conditional
+loss estimates. It is used to break ties between samples with the same
+expected loss. It should be set to a small positive value if many
+subgroup features are discrete, defaults to 0.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.check_subset_sizes">
+<span class="sig-name descname"><span class="pre">check_subset_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder.check_subset_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.check_subset_sizes" title="Link to this definition"></a></dt>
+<dd><p>A visual diagnostic for checking subset sizes are correct.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot</strong> (<em>bool</em>) – Whether or not to plot the results, defaults to True</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Matplotlib axis to plot on if plot is True, defaults to
+None, optional</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two lists, the first containing the subset fractions and the
+second containing the identified fractions. When plotted against
+each other the relationship should match the line y=x.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(List[float], List[float])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.compute_effect_sizes">
+<span class="sig-name descname"><span class="pre">compute_effect_sizes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder.compute_effect_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.compute_effect_sizes" title="Link to this definition"></a></dt>
+<dd><p>Compute the effect size (Cohen’s d) of the difference in the average
+loss for each worst-case subset and the full test dataset. Can also
+plot the effect sizes vs subset fraction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot</strong> (<em>bool</em>) – Whether or not to plot the results, defaults to False</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Matplotlib axis to plot on if plot is True, defaults to
+None, optional</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Two lists, the first containing the subset fractions and the
+second containing the effect size of the difference in the average
+loss in the worst subset and the full test dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(List[float], List[float])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.confidence_intervals">
+<span class="sig-name descname"><span class="pre">confidence_intervals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder.confidence_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.confidence_intervals" title="Link to this definition"></a></dt>
+<dd><p>Returns analytical confidence intervals for the worst-case loss
+estimates for each subset fraction size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array with first column containing lower confidence interval 
+and second column containing upper confidence interval.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>((# of subset fraction sizes, 2),ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.find_max_effect_size">
+<span class="sig-name descname"><span class="pre">find_max_effect_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder.find_max_effect_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.find_max_effect_size" title="Link to this definition"></a></dt>
+<dd><p>Finds the index of the worst subset producing the max effect size
+for the difference in the average loss of the subset and full dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The index of the subset producing the max effect size and the</p>
+</dd>
+</dl>
+<p>max effect size.
+:rtype: (int, float)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subgroup_feature_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samplewise_losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.fit" title="Link to this definition"></a></dt>
+<dd><p>Computes the worst-case data subsets for each subset fraction and
+returns the average loss on each subset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subgroup_features</strong> (<em>(</em><em>(</em><em>nsamples</em><em>, </em><em>nfeatures</em><em>)</em><em>, </em><em>ndarray</em><em>)</em>) – A numpy array of dim (nsamples, nfeatures)
+containing the subgroup defining feature values for each sample.</p></li>
+<li><p><strong>samplewise_losses</strong> (<em>(</em><em>(</em><em>nsamples</em><em>,</em><em>)</em><em>, </em><em>array</em><em>)</em>) – A numpy array of the per-sample observed loss</p></li>
+<li><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>string</em><em>]</em><em>, </em><em>optional</em>) – A list of names for the subgroup
+characterizing features, optional</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An array containing the average loss on each worst-case subset</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(# of subset_fractions, array)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.set_fit_request">
+<span class="sig-name descname"><span class="pre">set_fit_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samplewise_losses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgroup_feature_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#afisp.stability_analysis.WorstSubsetFinder" title="afisp.stability_analysis.WorstSubsetFinder"><span class="pre">WorstSubsetFinder</span></a></span></span><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.set_fit_request" title="Link to this definition"></a></dt>
+<dd><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">fit</span></code> method.</p>
+<p>Note that this method is only relevant if
+<code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
+Please see <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<p>The options for each parameter are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">fit</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
+</ul>
+<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
+existing request. This allows you to change the request for some
+parameters and not others.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.3.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is only relevant if this estimator is used as a
+sub-estimator of a meta-estimator, e.g. used inside a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pipeline.Pipeline</span></code>. Otherwise it has no effect.</p>
+</div>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>feature_names<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">feature_names</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>samplewise_losses<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">samplewise_losses</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>subgroup_feature_data<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">subgroup_feature_data</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>self<span class="classifier">object</span></dt><dd><p>The updated object.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.stability_analysis.WorstSubsetFinder.subset_masks">
+<span class="sig-name descname"><span class="pre">subset_masks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/stability_analysis.html#WorstSubsetFinder.subset_masks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.stability_analysis.WorstSubsetFinder.subset_masks" title="Link to this definition"></a></dt>
+<dd><p>Computes a boolean mask for indexing worst-case data subsets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of boolean masks for indexing the worst-case data
+subsets corresponding to each subset fraction</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[(# of samples, boolean ndarray)]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-afisp.subgroup_phenotyping">
+<span id="afisp-subgroup-phenotyping-module"></span><h2>afisp.subgroup_phenotyping module<a class="headerlink" href="#module-afisp.subgroup_phenotyping" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="afisp.subgroup_phenotyping.SubgroupPhenotyper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">afisp.subgroup_phenotyping.</span></span><span class="sig-name descname"><span class="pre">SubgroupPhenotyper</span></span><a class="reference internal" href="_modules/afisp/subgroup_phenotyping.html#SubgroupPhenotyper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.subgroup_phenotyping.SubgroupPhenotyper" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEstimator</span></code></p>
+<p>This class performs subgroup phenotyping. After using stability analysis
+to identify a poorly performing data subset, the SubgroupPhenotyper is used
+to find specific data phenotypes or subgroups that are present within the
+data subset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.subgroup_phenotyping.SubgroupPhenotyper.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subgroup_feature_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_loss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DecisionList'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data_for_sirus.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sirus_rules.txt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/subgroup_phenotyping.html#SubgroupPhenotyper.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.subgroup_phenotyping.SubgroupPhenotyper.fit" title="Link to this definition"></a></dt>
+<dd><p>Computes the subgroup phenotypes using an interpretable classifier.
+The subgroup phenotyper expects categorical features to encoded as
+binary dummy variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subgroup_feature_data</strong> – Array containing the subgroup feature
+data.</p></li>
+<li><p><strong>subset_labels</strong> – Binary labels for whether each sample is in the
+worst data subset.</p></li>
+<li><p><strong>test_loss</strong> – The observed loss for each sample. Used for filtering
+rules based on statistical significance and effect size.</p></li>
+<li><p><strong>method</strong> – Selects the interpretable classification method used for
+extracting the subgroup phenotypes. “SIRUS” uses the ‘Stable and
+Interpretable RUle Set’ method implemented in R. It requires a
+working R distribution with the ‘sirus’ package installed. This is
+recommended. As a python alternative, the “DecisionList” will use
+the SkopeRules DecisionListClassifier, defaults to “DecisionList’.</p></li>
+<li><p><strong>cv</strong> – For method SIRUS, whether or not to use cross-validation to
+select the rule selection threshold. If True, then p0 is ignored.
+Using cross-validation can be very slow, but results are often
+better.</p></li>
+<li><p><strong>p0</strong> (<em>Float in</em><em> (</em><em>0</em><em>, </em><em>1</em><em>)</em>) – For method SIRUS, the threshold (between 0 and 1) for rule
+selection. Ignored if cv is True, since cv is used to determine a
+good value for p0. The higher the value of p0, the fewer rules that
+will be selected. Recommended to choose a value &lt; 0.1, defaults to
+0.025.</p></li>
+<li><p><strong>rule_max</strong> (<em>int &gt; 0</em>) – The max number of rules that SIRUS will consider,
+defaults to 50.</p></li>
+<li><p><strong>depth</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The candidate rules extracted by the Subgroup Phenotyper</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[string]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="afisp.subgroup_phenotyping.SubgroupPhenotyper.set_fit_request">
+<span class="sig-name descname"><span class="pre">set_fit_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rule_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subgroup_feature_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_loss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$UNCHANGED$'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#afisp.subgroup_phenotyping.SubgroupPhenotyper" title="afisp.subgroup_phenotyping.SubgroupPhenotyper"><span class="pre">SubgroupPhenotyper</span></a></span></span><a class="headerlink" href="#afisp.subgroup_phenotyping.SubgroupPhenotyper.set_fit_request" title="Link to this definition"></a></dt>
+<dd><p>Request metadata passed to the <code class="docutils literal notranslate"><span class="pre">fit</span></code> method.</p>
+<p>Note that this method is only relevant if
+<code class="docutils literal notranslate"><span class="pre">enable_metadata_routing=True</span></code> (see <code class="xref py py-func docutils literal notranslate"><span class="pre">sklearn.set_config()</span></code>).
+Please see <span class="xref std std-ref">User Guide</span> on how the routing
+mechanism works.</p>
+<p>The options for each parameter are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code>: metadata is requested, and passed to <code class="docutils literal notranslate"><span class="pre">fit</span></code> if provided. The request is ignored if metadata is not provided.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code>: metadata is not requested and the meta-estimator will not pass it to <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code>: metadata is not requested, and the meta-estimator will raise an error if the user provides it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code>: metadata should be passed to the meta-estimator with this given alias instead of the original name.</p></li>
+</ul>
+<p>The default (<code class="docutils literal notranslate"><span class="pre">sklearn.utils.metadata_routing.UNCHANGED</span></code>) retains the
+existing request. This allows you to change the request for some
+parameters and not others.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.3.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is only relevant if this estimator is used as a
+sub-estimator of a meta-estimator, e.g. used inside a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pipeline.Pipeline</span></code>. Otherwise it has no effect.</p>
+</div>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cv<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">cv</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>depth<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">depth</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>input_fname<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">input_fname</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>method<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">method</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>output_fname<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">output_fname</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>p0<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">p0</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>rule_max<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">rule_max</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>subgroup_feature_data<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">subgroup_feature_data</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>subset_labels<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">subset_labels</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>test_loss<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">test_loss</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+<dt>verbose<span class="classifier">str, True, False, or None,                     default=sklearn.utils.metadata_routing.UNCHANGED</span></dt><dd><p>Metadata routing for <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">fit</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>self<span class="classifier">object</span></dt><dd><p>The updated object.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-afisp.utils">
+<span id="afisp-utils-module"></span><h2>afisp.utils module<a class="headerlink" href="#module-afisp.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.bootstrap_ci">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">bootstrap_ci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_bootstrap=100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confidence=0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss=&lt;function</span> <span class="pre">roc_auc_score&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_samples=False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#bootstrap_ci"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.bootstrap_ci" title="Link to this definition"></a></dt>
+<dd><p>Computes non-parametric bootstrap confidence interval for model
+performance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> – True target labels</p></li>
+<li><p><strong>y_pred</strong> – Model predictions (be it regression predictions, probability
+predictions, or classification predictions).</p></li>
+<li><p><strong>n_bootstrap</strong> (<em>int</em>) – Number of bootstrap resamples to perform, defaults to
+100.</p></li>
+<li><p><strong>confidence</strong> (<em>Float</em><em>, </em><em>between 0 and 1</em>) – The confidence level for the interval as a decimal,
+defaults to 0.95</p></li>
+<li><p><strong>loss</strong> – Loss function for computing average model performance. Should
+have signature ‘loss(y_true, y_pred)’, defaults to 
+sklearn.metrics.roc_auc_score</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The mean performance, the lower interval, and the upper interval
+from the bootstrap samples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.brier">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">brier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#brier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.brier" title="Link to this definition"></a></dt>
+<dd><p>Samplewise brier score for probabilistic classification</p>
+<p>param y: Array of true binary classification labels
+:type y: Numpy array with values in {0, 1}
+:param y_pred: Array of probabilistic predictions (between 0 and 1)
+:type y_pred: Numpy array with values in (0, 1)
+:return: Array of per-sample brier scores
+:rtype: Array[float]</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.clip_predictions">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">clip_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#clip_predictions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.clip_predictions" title="Link to this definition"></a></dt>
+<dd><p>Clip probability predictions to be in the (0, 1) open interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preds</strong> (<em>(</em><em>num samples</em><em>,</em><em>) </em><em>np array</em>) – Array of sample predictions</p></li>
+<li><p><strong>upper_bound</strong> (<em>float</em>) – Upper bound of clipped predictions, defaults to 0.99</p></li>
+<li><p><strong>lower_bound</strong> (<em>float</em>) – Lower bound of clipped predictions, defaults to 0.01</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predictions clipped to be in [lower_bound, upper_bound] interval</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.cohens_d">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">cohens_d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#cohens_d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.cohens_d" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.cross_entropy">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">cross_entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#cross_entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.cross_entropy" title="Link to this definition"></a></dt>
+<dd><p>Samplewise cross entropy loss for probabilistic classification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>Numpy array with values in {0</em><em>, </em><em>1}</em>) – Array of true binary classification labels</p></li>
+<li><p><strong>y_pred</strong> (<em>Numpy array with values in</em><em> (</em><em>0</em><em>, </em><em>1</em><em>)</em>) – Array of probabilistic predictions (between 0 and 1)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of per-sample cross entropy losses</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array[float]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.entropy">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">entropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#entropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.entropy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.hinge_surrogate">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">hinge_surrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#hinge_surrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.hinge_surrogate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.logit">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">logit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#logit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.logit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.mse">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">mse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#mse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.mse" title="Link to this definition"></a></dt>
+<dd><p>Samplewise mean squared error for regression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> – Array of true regression labels</p></li>
+<li><p><strong>y_pred</strong> – Array of regressin predictions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of samplewise mean squared errors</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.roc_auc_surrogate">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">roc_auc_surrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xent'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#roc_auc_surrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.roc_auc_surrogate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.torch_roc_auc_surrogate">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">torch_roc_auc_surrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'xent'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#torch_roc_auc_surrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.torch_roc_auc_surrogate" title="Link to this definition"></a></dt>
+<dd><p>PyTorch computation of a surrogate samplewise AUROC loss.</p>
+<p>param y: Array of true binary classification labels
+:type y: Numpy array with values in {0, 1}
+:param y_pred: Array of probabilistic predictions (between 0 and 1)
+:type y_pred: Numpy array with values in (0, 1)
+:param surrogate: String specifying which surrogate loss function to use,</p>
+<blockquote>
+<div><p>defaults to ‘xent’. ‘xent’: Cross-entropy surrogate. ‘hinge’: Hinge
+loss surrogate.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Array of samplewise surrogate AUROC losses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.xent_surrogate">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">xent_surrogate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#xent_surrogate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.xent_surrogate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="afisp.utils.zero_one_loss">
+<span class="sig-prename descclassname"><span class="pre">afisp.utils.</span></span><span class="sig-name descname"><span class="pre">zero_one_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/afisp/utils.html#zero_one_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#afisp.utils.zero_one_loss" title="Link to this definition"></a></dt>
+<dd><p>Samplewise Zero-One Loss for binary classification</p>
+<p>param y: Array of true binary classification labels
+:type y: Numpy array with values in {0, 1}
+:param y_pred: Array of binary classification predictions {0, 1}
+:type y_pred: Numpy array with values in {0, 1}
+:return: Array of per-sample zero-one losses
+:rtype: Array[float]</p>
+</dd></dl>
+
+</section>
+<section id="module-afisp">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-afisp" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="AFISP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Adarsh Subbaswamy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

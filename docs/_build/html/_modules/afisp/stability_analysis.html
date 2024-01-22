@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>afisp.stability_analysis &mdash; AFISP 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            AFISP
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">AFISP</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">AFISP</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">afisp.stability_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for afisp.stability_analysis</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">clone</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">interpret.glassbox</span> <span class="kn">import</span> <span class="n">ExplainableBoostingClassifier</span><span class="p">,</span> <span class="n">ExplainableBoostingRegressor</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">MiniBatchKMeans</span>
+<span class="kn">from</span> <span class="nn">afisp.utils</span> <span class="kn">import</span> <span class="n">cohens_d</span>
+
+
+
+<span class="c1">#Old name: LatentSubgroupShiftEstimator    </span>
+<div class="viewcode-block" id="WorstSubsetFinder">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder">[docs]</a>
+<span class="k">class</span> <span class="nc">WorstSubsetFinder</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This is a class for performing a Stability Analysis of a trained machine</span>
+<span class="sd">    learning (ML) model. Given a test dataset, a WorstSubsetFinder object </span>
+<span class="sd">    identifies a data subset of a particular sample size that produces the</span>
+<span class="sd">    worst performance (i.e., a worst-case data subset of a given size). A worst</span>
+<span class="sd">    case data subset corresponds to an adversarial covariate shift in the </span>
+<span class="sd">    distribution of user-specified features.</span>
+
+<span class="sd">    :param subset_fractions: A list of subset fractions between 0 and 1. For </span>
+<span class="sd">        each subset fraction, the WorstSubsetFinder identifies the worst</span>
+<span class="sd">        performing subset of approximately that subset fraction size (i.e., for</span>
+<span class="sd">        a subset fraction f and a dataset of size N, the subset will be size</span>
+<span class="sd">        approximately f*N, defaults to [0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 1.0].</span>
+<span class="sd">    :type subset_fractions: List[float]</span>
+<span class="sd">    :param conditional_loss_model: A supervised learning model with sklearn </span>
+<span class="sd">        interface for estimating the expected conditional loss of the ML model</span>
+<span class="sd">        to be evaluated, defaults to None which will fit an </span>
+<span class="sd">        ExplainableBoostingRegressor.</span>
+<span class="sd">    :param cv: Number of folds for cross validation to predict the loss for</span>
+<span class="sd">        each data sample, defaults to 10.</span>
+<span class="sd">    :type cv: int</span>
+<span class="sd">    :param verbose: If True, then prints information during calls to self.fit,</span>
+<span class="sd">        defaults to False.</span>
+<span class="sd">    :type verbose: bool</span>
+<span class="sd">    :param eps: Corresponds to the max amount of noise to add to conditional</span>
+<span class="sd">        loss estimates. It is used to break ties between samples with the same</span>
+<span class="sd">        expected loss. It should be set to a small positive value if many</span>
+<span class="sd">        subgroup features are discrete, defaults to 0.</span>
+<span class="sd">    :type eps: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">subset_fractions</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                 <span class="n">conditional_loss_model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cv</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">eps</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">eps</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;eps must be a float &gt;= 0&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_called_</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_sizes_computed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># self.fit_mu_ = False</span>
+        
+<div class="viewcode-block" id="WorstSubsetFinder.fit">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder.fit">[docs]</a>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subgroup_feature_data</span><span class="p">,</span> 
+            <span class="n">samplewise_losses</span><span class="p">,</span> <span class="n">feature_names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the worst-case data subsets for each subset fraction and</span>
+<span class="sd">        returns the average loss on each subset.</span>
+
+<span class="sd">        :param subgroup_features: A numpy array of dim (nsamples, nfeatures)</span>
+<span class="sd">            containing the subgroup defining feature values for each sample.</span>
+<span class="sd">        :type subgroup_features: ((nsamples, nfeatures), ndarray)</span>
+<span class="sd">        :param samplewise_losses: A numpy array of the per-sample observed loss</span>
+<span class="sd">        :type samplewise_losses: ((nsamples,), array)</span>
+<span class="sd">        :param feature_names: A list of names for the subgroup</span>
+<span class="sd">            characterizing features, optional</span>
+<span class="sd">        :type feature_names: List[string], optional</span>
+<span class="sd">        :return: An array containing the average loss on each worst-case subset</span>
+<span class="sd">        :rtype: (# of subset_fractions, array)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_samplewise_losses</span> <span class="o">=</span> <span class="n">samplewise_losses</span>
+        <span class="c1"># by default we will use Explainable Boosting Machines (EBMs) since</span>
+        <span class="c1"># we have observed that these models work well out of the box, without</span>
+        <span class="c1"># any hyperparameter tuning.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_mdl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_loss_model</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conditional_loss_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mu_mdl</span> <span class="o">=</span> <span class="n">ExplainableBoostingRegressor</span><span class="p">(</span>
+                <span class="n">feature_names</span><span class="o">=</span><span class="n">feature_names</span>
+            <span class="p">)</span>
+        
+        <span class="n">X</span> <span class="o">=</span> <span class="n">subgroup_feature_data</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples_</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="n">num_subsets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">)</span>
+        
+        <span class="c1"># random noise for when subgroup feature data is all discrete</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span>
+        
+        <span class="c1"># mu hat will contain our expected conditional loss estimates</span>
+        <span class="c1"># one per sample</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        
+        <span class="c1"># eta hat will contain the sample-specific thresholds corresponding</span>
+        <span class="c1"># to quantiles of the expected conditional loss. Each sample will</span>
+        <span class="c1"># have a threshold per subset fraction. The quantile is equal to</span>
+        <span class="c1"># 1 - the sample fraction.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eta_hat_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_subsets</span><span class="p">,</span><span class="n">N</span><span class="p">))</span>
+        
+        <span class="c1"># intermediate computation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h_hat_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_subsets</span><span class="p">,</span><span class="n">N</span><span class="p">))</span>
+        
+        <span class="c1"># stores the expected conditional loss model for each fold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_mdls_</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">folds</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cv</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">subgroup_feature_data</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">train_idxs</span><span class="p">,</span><span class="n">test_idxs</span> <span class="ow">in</span> <span class="n">folds</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;k = </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="c1"># fit model to fold                        </span>
+            <span class="n">mu_mdl_k</span> <span class="o">=</span> <span class="n">clone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_mdl</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">train_idxs</span><span class="p">],</span>
+                                              <span class="n">samplewise_losses</span><span class="p">[</span><span class="n">train_idxs</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span><span class="p">[</span><span class="n">test_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="n">mu_mdl_k</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">test_idxs</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mu_mdls_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mu_mdl_k</span><span class="p">)</span>
+                        
+            <span class="c1"># Note: for a given alpha value, the eta value for samples will</span>
+            <span class="c1"># vary depending on which fold the sample is in</span>
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">):</span>
+                <span class="c1"># compute the 1-alpha quantile of the expected cond loss</span>
+                <span class="c1"># this is the eta value for all samples in this fold</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eta_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">test_idxs</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span><span class="p">[</span><span class="n">test_idxs</span><span class="p">],</span> <span class="mf">1.</span><span class="o">-</span><span class="n">alpha</span><span class="p">),</span> 
+                            <span class="nb">len</span><span class="p">(</span><span class="n">test_idxs</span><span class="p">)</span>
+                <span class="p">)</span>
+            
+        
+        
+        <span class="c1"># R hat will contain the worst case average loss for each subset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_hats_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_subsets</span><span class="p">)</span>
+        
+        <span class="c1"># variance estimates and confidence intervals for worst case</span>
+        <span class="c1"># average loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_hats_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_subsets</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cis_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_subsets</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+            
+        <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span> <span class="o">+</span> <span class="n">U</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">])</span>
+        
+            <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span> <span class="o">+</span> <span class="n">U</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">],</span><span class="mf">0.0</span><span class="p">)</span><span class="o">/</span><span class="n">alpha</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+            <span class="n">psi</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">samplewise_losses</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span><span class="p">)</span><span class="o">/</span><span class="n">alpha</span>
+    
+            <span class="bp">self</span><span class="o">.</span><span class="n">R_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">psi</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+            
+            <span class="c1"># lower confidence interval</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cis_</span><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.96</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+            <span class="c1"># upper confidence interval</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cis_</span><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.96</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma_hats_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_called_</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_hats_</span></div>
+
+    
+<div class="viewcode-block" id="WorstSubsetFinder.confidence_intervals">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder.confidence_intervals">[docs]</a>
+    <span class="k">def</span> <span class="nf">confidence_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns analytical confidence intervals for the worst-case loss</span>
+<span class="sd">        estimates for each subset fraction size.</span>
+
+<span class="sd">        :return: Array with first column containing lower confidence interval </span>
+<span class="sd">            and second column containing upper confidence interval.</span>
+<span class="sd">        :rtype: ((# of subset fraction sizes, 2),ndarray)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_called_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Must call &quot;fit&quot; on WorstSubsetFinder object first.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cis_</span></div>
+
+    
+<div class="viewcode-block" id="WorstSubsetFinder.subset_masks">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder.subset_masks">[docs]</a>
+    <span class="k">def</span> <span class="nf">subset_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes a boolean mask for indexing worst-case data subsets.</span>
+
+<span class="sd">        :return: List of boolean masks for indexing the worst-case data</span>
+<span class="sd">            subsets corresponding to each subset fraction</span>
+<span class="sd">        :rtype: List[(# of samples, boolean ndarray)]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_called_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Must call &quot;fit&quot; on WorstSubsetFinder object first.&#39;</span><span class="p">)</span>
+        <span class="c1"># find the samples for which expected conditional loss is greater</span>
+        <span class="c1"># than the quantile.</span>
+        <span class="c1"># only compute once</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_hat_</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta_hat_</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> 
+                <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">))]</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span></div>
+
+    
+<div class="viewcode-block" id="WorstSubsetFinder.check_subset_sizes">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder.check_subset_sizes">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_subset_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A visual diagnostic for checking subset sizes are correct.</span>
+
+<span class="sd">        :param plot: Whether or not to plot the results, defaults to True</span>
+<span class="sd">        :type plot: bool</span>
+<span class="sd">        :param ax: Matplotlib axis to plot on if plot is True, defaults to</span>
+<span class="sd">            None, optional</span>
+<span class="sd">        :type ax: Matplotlib axis</span>
+<span class="sd">        :return: Two lists, the first containing the subset fractions and the</span>
+<span class="sd">            second containing the identified fractions. When plotted against</span>
+<span class="sd">            each other the relationship should match the line y=x.</span>
+<span class="sd">        :rtype: (List[float], List[float])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_called_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Must call &quot;fit&quot; on WorstSubsetFinder object first.&#39;</span><span class="p">)</span>
+        <span class="n">observed_fractions</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset_masks</span><span class="p">()]</span>
+        
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">,</span> <span class="n">observed_fractions</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;k:&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Perfect fit&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Subset Fraction&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Fraction Selected by Worst-Case Mask&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">,</span> <span class="n">observed_fractions</span></div>
+
+    
+<div class="viewcode-block" id="WorstSubsetFinder.compute_effect_sizes">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder.compute_effect_sizes">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_effect_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the effect size (Cohen&#39;s d) of the difference in the average</span>
+<span class="sd">        loss for each worst-case subset and the full test dataset. Can also</span>
+<span class="sd">        plot the effect sizes vs subset fraction.</span>
+
+<span class="sd">        :param plot: Whether or not to plot the results, defaults to False</span>
+<span class="sd">        :type plot: bool</span>
+<span class="sd">        :param ax: Matplotlib axis to plot on if plot is True, defaults to</span>
+<span class="sd">            None, optional</span>
+<span class="sd">        :type ax: Matplotlib axis</span>
+<span class="sd">        :return: Two lists, the first containing the subset fractions and the</span>
+<span class="sd">            second containing the effect size of the difference in the average</span>
+<span class="sd">            loss in the worst subset and the full test dataset.</span>
+<span class="sd">        :rtype: (List[float], List[float])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_called_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Must call &quot;fit&quot; on WorstSubsetFinder object first.&#39;</span><span class="p">)</span>
+
+        <span class="n">cds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># p_vals = []</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">):</span>
+            <span class="n">idxs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">odxs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">cds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cohens_d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_samplewise_losses</span><span class="p">[</span><span class="n">idxs</span><span class="p">],</span> 
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">_samplewise_losses</span><span class="p">))</span>
+            <span class="c1"># could also compute statistical significance if desired</span>
+            <span class="c1"># pval = ttest_ind(self._samplewise_losses[idxs], </span>
+            <span class="c1">#                     x2=self._samplewise_losses[odxs], </span>
+            <span class="c1">#                     value=0.,</span>
+            <span class="c1">#                     alternative=&#39;larger&#39;,</span>
+            <span class="c1">#                     usevar=&#39;unequal&#39;)[1]</span>
+            <span class="c1"># p_vals.append(pval)</span>
+
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">,</span> <span class="n">cds</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Subset Fraction&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Cohen&#39;s d (Effect Size) of Loss&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_sizes</span> <span class="o">=</span> <span class="n">cds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_sizes_computed</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset_fractions</span><span class="p">,</span> <span class="n">cds</span></div>
+
+
+<div class="viewcode-block" id="WorstSubsetFinder.find_max_effect_size">
+<a class="viewcode-back" href="../../afisp.html#afisp.stability_analysis.WorstSubsetFinder.find_max_effect_size">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_max_effect_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds the index of the worst subset producing the max effect size</span>
+<span class="sd">        for the difference in the average loss of the subset and full dataset. </span>
+
+<span class="sd">        :return: The index of the subset producing the max effect size and the</span>
+<span class="sd">        max effect size.</span>
+<span class="sd">        :rtype: (int, float)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_sizes_computed</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_effect_sizes</span><span class="p">(</span><span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_effect_sizes</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_effect_sizes</span><span class="p">)</span></div>
+</div>
+
+    
+
+<span class="c1"># This is a naive clustering approach that is an alternative to AFISP</span>
+<span class="c1"># It theoretically and empirically is worse than AFISP, but may add support</span>
+<span class="c1"># in a future version</span>
+<span class="c1"># class ClusteringEstimator(BaseEstimator):</span>
+
+<span class="c1">#     def __init__(self, kmax=5, verbose=False):</span>
+<span class="c1">#         self.__dict__.update(locals())</span>
+
+<span class="c1">#         self.fit_called_ = False</span>
+<span class="c1">#         self.masks_ = None</span>
+
+
+<span class="c1">#     def fit(self, subgroup_feature_data, samplewise_losses, feature_names=None):</span>
+
+<span class="c1">#         models = []</span>
+<span class="c1">#         cluster_inds = []</span>
+<span class="c1">#         worst_perf = []</span>
+<span class="c1">#         masks = []</span>
+<span class="c1">#         def iteration(k):</span>
+<span class="c1">#             model = KMeans(n_clusters=k, n_init=10)</span>
+<span class="c1">#             preds = model.fit_predict(subgroup_feature_data)</span>
+<span class="c1">#             c_losses = np.zeros(k)</span>
+<span class="c1">#             for i in range(k):</span>
+<span class="c1">#                 c_losses[i] = samplewise_losses[model.labels_ == i].mean()</span>
+<span class="c1">#             c_idx = np.argmax(c_losses)</span>
+<span class="c1">#             worst_perf.append(max(c_losses))</span>
+<span class="c1">#             cluster_inds.append(preds)</span>
+<span class="c1">#             models.append(model)</span>
+<span class="c1">#             masks.append(model.labels_ == c_idx)</span>
+        
+<span class="c1">#         if self.verbose:</span>
+<span class="c1">#             for k in tqdm(range(2, self.kmax+1)):</span>
+<span class="c1">#                 iteration(k)</span>
+<span class="c1">#         else:</span>
+            
+<span class="c1">#             for k in range(2, self.kmax+1):</span>
+<span class="c1">#                 iteration(k)</span>
+                
+<span class="c1">#         idx = np.argmax(worst_perf)</span>
+<span class="c1">#         self.model_ = models[idx]</span>
+<span class="c1">#         self.masks_ = masks[idx]</span>
+<span class="c1">#         self.fit_called_ = True</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Adarsh Subbaswamy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
