@@ -359,6 +359,15 @@
 <div class="viewcode-block" id="cohens_d">
 <a class="viewcode-back" href="../../afisp.html#afisp.utils.cohens_d">[docs]</a>
 <span class="k">def</span> <span class="nf">cohens_d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes effect size as measured by Cohen&#39;s d. The effect size is a</span>
+<span class="sd">    scaled difference in the means between two groups.</span>
+
+<span class="sd">    :param x: The measurements for group 1.</span>
+<span class="sd">    :param y: The measurements for group 2.</span>
+<span class="sd">    :return: Cohen&#39;s d, the effect size for the difference in measurements</span>
+<span class="sd">        between the two groups.</span>
+<span class="sd">    :rtype: Float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">dof</span> <span class="o">=</span> <span class="n">nx</span> <span class="o">+</span> <span class="n">ny</span> <span class="o">-</span> <span class="mi">2</span>

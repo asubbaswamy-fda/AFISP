@@ -248,6 +248,15 @@ def bootstrap_ci(y_true, y_pred, n_bootstrap=100, confidence=0.95, loss=roc_auc_
     return np.mean(aucs), lower, upper
 
 def cohens_d(x, y):
+    """Computes effect size as measured by Cohen's d. The effect size is a
+    scaled difference in the means between two groups.
+
+    :param x: The measurements for group 1.
+    :param y: The measurements for group 2.
+    :return: Cohen's d, the effect size for the difference in measurements
+        between the two groups.
+    :rtype: Float
+    """
     nx = len(x)
     ny = len(y)
     dof = nx + ny - 2

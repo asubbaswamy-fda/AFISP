@@ -267,9 +267,9 @@ class WorstSubsetFinder(BaseEstimator):
     def find_max_effect_size(self):
         """Finds the index of the worst subset producing the max effect size
         for the difference in the average loss of the subset and full dataset. 
-
+            
         :return: The index of the subset producing the max effect size and the
-        max effect size.
+            max effect size.
         :rtype: (int, float)
         """
 
