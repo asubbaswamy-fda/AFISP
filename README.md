@@ -2,6 +2,7 @@
 
 This repository contains code for the Regulatory Science Tool titled AFISP. The tool allows users to probe a trained machine learning (ML) or AI model for subgroups on which it underperforms.
 
+Full documentation can be viewed at [https://afisp.readthedocs.io/](https://afisp.readthedocs.io/).
 
 # Installation
 
