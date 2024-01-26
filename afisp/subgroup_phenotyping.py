@@ -2,10 +2,12 @@ import numpy as np
 from sklearn.base import BaseEstimator
 import subprocess
 from tqdm import tqdm
-from afisp.utils import cohens_d
+from afisp.utils import cohens_d, bootstrap_ci
 from statsmodels.stats.weightstats import ttest_ind
 from imodels.rule_set.skope_rules import SkopeRulesClassifier
+from sklearn.metrics import roc_auc_score, brier_score_loss
 from pathlib import Path
+import pandas as pd
 import os
 
 
@@ -60,6 +62,7 @@ class SubgroupPhenotyper(BaseEstimator):
         """
         phenotype_df = subgroup_feature_data.copy()
         phenotype_df['subset_label'] = subset_labels
+        self._phenotype_df = phenotype_df
 
         if method == "SIRUS":
             # need to check that we have R installed with SIRUS package
@@ -123,6 +126,42 @@ class SubgroupPhenotyper(BaseEstimator):
         self.fit_called_ = True
         self._extracted_rules = extracted_rules
         return self._extracted_rules
+
+    def generate_subgroup_table(self, y_test, test_preds, loss_fn=brier_score_loss):
+        """Generates a summary table reporting the subgroup phenotypes
+        identified to have poor performance by the SubgroupPhenotyper. The
+        table also reports the sample size and the performance (including a 95%
+        bootstrap confidence interval)
+
+        :param y_test: The true labels for the test dataset
+        :param test_preds: Test set predictions from model being evaluated.
+        :param loss_fn: Loss function for computing average performance on test
+            dataset.
+        """
+
+        if not self.fit_called_:
+            raise RuntimeError('Must call "fit" on SubgroupPhenotyper object first.') 
+
+        r_aucs = []
+        r_ls = []
+        r_us = []
+        ns = []
+        
+        for rule in self._extracted_rules:
+            rows = self._phenotype_df.eval(str(rule))
+            ns.append(np.sum(rows))
+            m, l, u = bootstrap_ci(y_test[rows], test_preds[rows], loss=loss_fn)
+            r_aucs.append(m)
+            r_ls.append(l)
+            r_us.append(u)
+
+        return pd.DataFrame({'Phenotype': self._extracted_rules, 
+                             'Performance': r_aucs, 
+                             'N': ns, 
+                             'Lower': r_ls, 
+                             'Upper': r_us}).sort_values(by='Performance')
+        
+        
 
     def _negate_simple_rule(self, rule):
         """Negates a rule string of the form "if ARG [<|>|<=|>=] VAL"

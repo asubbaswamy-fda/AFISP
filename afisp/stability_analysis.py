@@ -276,6 +276,9 @@ class WorstSubsetFinder(BaseEstimator):
         if not self._effect_sizes_computed:
             self.compute_effect_sizes(plot=False)
         return np.argmax(self._effect_sizes), max(self._effect_sizes)
+
+    # add function that finds the largest worst subset that produces performance
+    # below a user specificed threshold
     
 
 # This is a naive clustering approach that is an alternative to AFISP
